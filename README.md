@@ -31,7 +31,7 @@ See the docs for more information on how to install and configure Lokka.
 
 ### Tools
 
-1. `Lokka-Microsoft`
+1. `lokka-microsoft-userauth`
    - Call Microsoft Graph & Azure APIs. Supports querying Azure and Microsoft 365 tenants. Updates are also supported if permissions are provided.
    - Input:
      - `apiType` (string): Type of Microsoft API to query. Options: 'graph' for Microsoft Graph (Entra) or 'azure' for Azure Resource Management.
@@ -52,6 +52,7 @@ The configuration of the server is done using environment variables. The followi
 | `TENANT_ID` | The ID of the Microsoft Entra tenant. |
 | `CLIENT_ID` | The ID of the application registered in Microsoft Entra. |
 | `CLIENT_SECRET` | The client secret of the application registered in Microsoft Entra. |
+| `USER_GRAPH_TOKEN` | A MS Graph API token for the user interacting with the MCP server. |
 
 ## Installation
 
@@ -61,13 +62,14 @@ To use this server with the Claude Desktop app, add the following configuration 
 ```json
 {
   "mcpServers": {
-    "Lokka-Microsoft": {
+    "lokka-microsoft-userauth": {
       "command": "npx",
       "args": ["-y", "@merill/lokka"],
       "env": {
         "TENANT_ID": "<tenant-id>",
         "CLIENT_ID": "<client-id>",
-        "CLIENT_SECRET": "<client-secret>"
+        "CLIENT_SECRET": "<client-secret>",
+        "USER_GRAPH_TOKEN": "<user-graph-token>"
       }
     }
   }
@@ -75,3 +77,5 @@ To use this server with the Claude Desktop app, add the following configuration 
 ```
 
 Make sure to replace `<tenant-id>`, `<client-id>`, and `<client-secret>` with the actual values from your Microsoft Entra application. (See [Install Guide](https://lokka.dev/docs/install) for more details on how to create an Entra app and configure the agent.)
+
+You can get a graph token at Microsoft Graph Explorer, for the logged in user.

@@ -26,7 +26,7 @@
     "lokka": "build/main.js"
   },
   "scripts": {
-    "build": "tsc && chmod 755 build/main.js"
+    "build": "tsc"
   },
   "files": [
     "build"

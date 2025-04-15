@@ -85,7 +85,7 @@ GitHub Copilot Agent in VS Code is a great option if you already have GitHub Cop
 ```json
 {
   "mcpServers": {
-    "Lokka-Microsoft": {
+    "lokka-microsoft-userauth": {
       "command": "npx",
       "args": ["-y", "@merill/lokka"],
       "env": {
@@ -131,7 +131,7 @@ GitHub Copilot Agent in VS Code is a great option if you already have GitHub Cop
   - Tenant ID: `<tenant-id>`
   - Client ID: `<client-id>`
   - Client secret : `<client-secret>`
-  - Server ID: `Lokka-Microsoft`
+  - Server ID: `lokka-microsoft-userauth`
 - Where to save configuration: `User Settings`
 - This will open the `settings.json` file in VS Code.
 - `File` > `Save` to save the file.
@@ -143,7 +143,7 @@ Update the settings.json file and change the command and args parameters as show
 ```json {4,5}
 {
   "mcp.servers": {
-    "Lokka-Microsoft": {
+    "lokka-microsoft-userauth": {
       "command": "cmd",
       "args": ["/c", "npx", "-y", "@merill/lokka"],
       "env": {
@@ -158,7 +158,7 @@ Update the settings.json file and change the command and args parameters as show
 </details>
 
 - Open the Command Palette again (`Ctrl + Shift +P`) and type `MCP` and select `MCP: List Servers`
-- Select `Lokka-Microsoft` from the list of servers.
+- Select `lokka-microsoft-userauth` from the list of servers.
 - Selet `Start Server`
 - This will start the Lokka server and you should see a message in the output window saying `Connection state: Running`.
 

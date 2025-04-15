@@ -47,7 +47,7 @@ Follow this guide if you want to build Lokka from source to contribute to the pr
 ```json
 {
   "mcpServers": {
-      "Lokka-Microsoft": {
+      "lokka-microsoft-userauth": {
           "command": "node",
           "args": [
               "<absolute-path-to-main.js>/src/mcp/build/main.js"
@@ -92,7 +92,7 @@ Follow this guide if you want to build Lokka from source to contribute to the pr
 - Type `MCP` and select `Command (stdio)`
 - Select
   - Command: `node`
-  - Server ID: `Lokka-Microsoft`
+  - Server ID: `lokka-microsoft-userauth`
 - Where to save configuration: `User Settings`
 - This will open the `settings.json` file in VS Code.
 
@@ -105,7 +105,7 @@ Follow this guide if you want to build Lokka from source to contribute to the pr
 ```json
 "mcp": {
   "servers": {
-      "Lokka-Microsoft": {
+      "lokka-microsoft-userauth": {
           "command": "node",
           "args": [
               "<absolute-path-to-main.js>/src/mcp/build/main.js"

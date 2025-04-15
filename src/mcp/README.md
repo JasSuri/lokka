@@ -23,7 +23,7 @@ Follow the guide at [Lokka.dev](https://lokka.dev) to get started with Lokka and
 ```json
 {
   "mcpServers": {
-    "Lokka-Microsoft": {
+    "lokka-microsoft-userauth": {
       "command": "npx",
       "args": ["-y", "@merill/lokka"],
       "env": {

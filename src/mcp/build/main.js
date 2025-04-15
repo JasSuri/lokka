@@ -4,21 +4,20 @@ import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
 import { z } from "zod";
 import { ClientSecretCredential } from "@azure/identity";
 import { Client, PageIterator } from "@microsoft/microsoft-graph-client";
-import { TokenCredentialAuthenticationProvider } from "@microsoft/microsoft-graph-client/authProviders/azureTokenCredentials/index.js";
 import fetch from 'isomorphic-fetch'; // Required polyfill for Graph client
 import { logger } from "./logger.js";
 // Set up global fetch for the Microsoft Graph client
 global.fetch = fetch;
 // Create server instance
 const server = new McpServer({
-    name: "Lokka-Microsoft",
+    name: "lokka-microsoft-userauth",
     version: "0.1.9", // Incremented version for refactor
 });
 logger.info("Starting Lokka Multi-Microsoft API MCP Server (v0.1.9 - Refactored with Graph SDK)");
 // Initialize Graph Client and Azure Auth Credential outside the tool function
 let graphClient = null;
 let azureCredential = null; // For Azure RM calls
-server.tool("Lokka-Microsoft", "A versatile tool to interact with Microsoft APIs including Microsoft Graph (Entra) and Azure Resource Management. IMPORTANT: For Graph API GET requests using advanced query parameters ($filter, $count, $search, $orderby), you are ADVISED to set 'consistencyLevel: \"eventual\"'.", {
+server.tool("lokka-microsoft-userauth", "A versatile tool to interact with Microsoft APIs including Microsoft Graph (Entra) and Azure Resource Management. IMPORTANT: For Graph API GET requests using advanced query parameters ($filter, $count, $search, $orderby), you are ADVISED to set 'consistencyLevel: \"eventual\"'.", {
     apiType: z.enum(["graph", "azure"]).describe("Type of Microsoft API to query. Options: 'graph' for Microsoft Graph (Entra) or 'azure' for Azure Resource Management."),
     path: z.string().describe("The Azure or Graph API URL path to call (e.g. '/users', '/groups', '/subscriptions')"),
     method: z.enum(["get", "post", "put", "patch", "delete"]).describe("HTTP method to use"),
@@ -30,7 +29,7 @@ server.tool("Lokka-Microsoft", "A versatile tool to interact with Microsoft APIs
     fetchAll: z.boolean().optional().default(false).describe("Set to true to automatically fetch all pages for list results (e.g., users, groups). Default is false."),
     consistencyLevel: z.string().optional().describe("Graph API ConsistencyLevel header. ADVISED to be set to 'eventual' for Graph GET requests using advanced query parameters ($filter, $count, $search, $orderby)."),
 }, async ({ apiType, path, method, apiVersion, subscriptionId, queryParams, body, graphApiVersion, fetchAll, consistencyLevel }) => {
-    logger.info(`Executing Lokka-Microsoft tool with params: apiType=${apiType}, path=${path}, method=${method}, graphApiVersion=${graphApiVersion}, fetchAll=${fetchAll}, consistencyLevel=${consistencyLevel}`);
+    logger.info(`Executing lokka-microsoft-userauth tool with params: apiType=${apiType}, path=${path}, method=${method}, graphApiVersion=${graphApiVersion}, fetchAll=${fetchAll}, consistencyLevel=${consistencyLevel}`);
     let determinedUrl;
     try {
         let responseData;
@@ -216,7 +215,7 @@ server.tool("Lokka-Microsoft", "A versatile tool to interact with Microsoft APIs
         };
     }
     catch (error) {
-        logger.error(`Error in Lokka-Microsoft tool (apiType: ${apiType}, path: ${path}, method: ${method}):`, error); // Added more context to error log
+        logger.error(`Error in lokka-microsoft-userauth tool (apiType: ${apiType}, path: ${path}, method: ${method}):`, error); // Added more context to error log
         // Try to determine the base URL even in case of error
         if (!determinedUrl) {
             determinedUrl = apiType === 'graph'
@@ -245,17 +244,18 @@ async function main() {
     const tenantId = process.env.TENANT_ID;
     const clientId = process.env.CLIENT_ID;
     const clientSecret = process.env.CLIENT_SECRET;
-    if (!tenantId || !clientId || !clientSecret) {
-        logger.error("Missing required environment variables: TENANT_ID, CLIENT_ID, or CLIENT_SECRET");
-        throw new Error("Missing required environment variables: TENANT_ID, CLIENT_ID, or CLIENT_SECRET");
+    const userGraphToken = process.env.USER_GRAPH_TOKEN;
+    if (!tenantId || !userGraphToken || !clientId || !clientSecret) {
+        logger.error("Missing required environment variables: TENANT_ID, USER_GRAPH_TOKEN");
+        throw new Error("Missing required environment variables: TENANT_ID, USER_GRAPH_TOKEN");
     }
     // Initialize Azure Credential
     azureCredential = new ClientSecretCredential(tenantId, clientId, clientSecret);
-    // Initialize Graph Authentication Provider
-    const authProvider = new TokenCredentialAuthenticationProvider(azureCredential, {
-        scopes: ["https://graph.microsoft.com/.default"],
-    });
-    // Initialize Graph Client
+    // Define a simple auth provider using the token
+    const authProvider = {
+        getAccessToken: async () => userGraphToken
+    };
+    // Initialize Graph Client with the custom auth provider
     graphClient = Client.initWithMiddleware({
         authProvider: authProvider,
     });
